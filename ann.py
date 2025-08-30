@@ -10,9 +10,8 @@ LossFn     = Callable[[np.ndarray, np.ndarray], float]
 class ANN:
     """
     Feedforward net with flexible sizing (no explicit per-layer bias vectors).
-    If you want a bias, prepend a column of ones to your inputs as you suggested.
+    If you want a bias, prepend a column of ones to your inputs.
     """
-
     def __init__(
         self,
         input_size: int,
@@ -263,7 +262,7 @@ net = ANN(
     input_size=X_train.shape[1],
     output_size=3,
     net_length=2,
-    net_width=[10, 10, 10],
+    net_width=[10, 10],
     hidden_activation="relu",
     output_activation="softmax",
     loss="cross_entropy",
