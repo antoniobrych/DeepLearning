@@ -57,8 +57,12 @@ class Up(nn.Module):
         self.conv = DoubleConv(in_ch=out_ch * 2, out_ch=out_ch)
     def forward(self, x: Tensor, skip: Tensor) -> Tensor:
         x = self.up(x)
+        # Shapes can differ due to valid convolutions; crop both to common size
         if x.shape[-2:] != skip.shape[-2:]:
-            skip = center_crop(skip, x.shape[-2], x.shape[-1])
+            target_h = min(x.shape[-2], skip.shape[-2])
+            target_w = min(x.shape[-1], skip.shape[-1])
+            x = center_crop(x, target_h, target_w)
+            skip = center_crop(skip, target_h, target_w)
         x = torch.cat([skip, x], dim=1)
         return self.conv(x)
 
@@ -80,13 +84,13 @@ class Unet(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         skips: List[Tensor] = []
         x = self.stem(x)
-        skips.append(x)
+
         for down in self.downs:
-            x = down(x)
             skips.append(x)
+            x = down(x)
         x = self.bottleneck(x)
-        for i, up in enumerate(self.ups, start=1):
-            skip = skips[-i]
+        for up in self.ups:
+            skip = skips.pop()
             x = up(x, skip)
         logits: Tensor = self.head(x)
         return logits
