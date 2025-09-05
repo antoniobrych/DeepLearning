@@ -107,6 +107,3 @@ class CamVidDataset(Dataset[Tuple[Tensor, Tensor]]):
         msk_t: Tensor = self.mask_transform(msk_pil)   
 
         return img_t, msk_t
-    
-
-
