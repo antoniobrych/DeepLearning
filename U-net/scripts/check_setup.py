@@ -7,9 +7,11 @@ from typing import Tuple
 import torch
 from torch import Tensor
 from torch.utils.data import DataLoader
+from typing import Union
 
 
 def add_src_to_path() -> None:
+    
     this_dir = Path(__file__).resolve().parent
     u_net_root = this_dir.parent
     src_path = u_net_root / "src"
@@ -49,7 +51,9 @@ def infer_num_classes(colors_csv: Path) -> int:
     return len(df)
 
 
-def load_split(root: Path, split: str, ignore_index: int | None = None) -> CamVidDataset:
+from typing import Union
+
+def load_split(root: Path, split: str, ignore_index: Union[int, None] = None) -> CamVidDataset:
     images = root / split
     labels = root / f"{split}_labels"
     colors_csv = root / "class_dict.csv"
